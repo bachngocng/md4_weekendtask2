@@ -3,18 +3,22 @@ package com.codegym.controller;
 import com.codegym.model.Category;
 import com.codegym.model.Product;
 import com.codegym.model.ProductForm;
-import com.codegym.repository.IProductRepository;
 import com.codegym.service.category.ICategoryService;
 import com.codegym.service.product.IProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Repository;
 import org.springframework.util.FileCopyUtils;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.validation.Valid;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -27,15 +31,18 @@ public class ProductController {
     @Autowired
     private ICategoryService categoryService;
 
-    @Value("${file-upload}")
+    @Value("E:/CodeGym/MODULE 4/BaiCuoiTuan2/image/")
     private String uploadPath;
 
     @GetMapping("/products/list")
-    public ModelAndView showListProduct(@RequestParam(name="q")Optional<String> q){
+    public ModelAndView showListProduct(@RequestParam(name="q")Optional<String> q,@PageableDefault(value = 5) Pageable pageable){
+        Page<Product> products;
         ModelAndView modelAndView = new ModelAndView("/product/list");
-        Iterable<Product> products = productService.findAll();
-        if(q.isPresent()){
-            products=productService.findProductByNameContaining(q.get());
+        if(!q.isPresent()){
+            products=productService.findAll(pageable);
+        } else {
+            modelAndView.addObject("q", q.get());
+            products = productService.searchProductByPartOfName(q.get(), pageable);
         }
         modelAndView.addObject("products", products);
         return modelAndView;
@@ -75,7 +82,10 @@ public class ProductController {
     }
 
     @PostMapping("/products/create")
-    public ModelAndView createProduct(@ModelAttribute ProductForm productForm) {
+    public ModelAndView createProduct(@Validated @ModelAttribute("product") ProductForm productForm,BindingResult bindingResult) {
+        if(bindingResult.hasErrors()){
+            return new ModelAndView("/product/create");
+        }
         String fileName = productForm.getImage().getOriginalFilename();
         long currentTime = System.currentTimeMillis(); //Xử lý lấy thời gian hiện tại
         fileName = currentTime + fileName;

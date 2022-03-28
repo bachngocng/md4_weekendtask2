@@ -1,12 +1,24 @@
 package com.codegym.model;
 
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Size;
 
 public class ProductForm {
     private Long id;
+
+    @NotEmpty(message = "Not nullable")
+    @Size(min=6,max=20,message = "Product name must have 5 to 20 characters")
     private String name;
+
+    @NotNull()
     private double price;
+
+    @NotNull
     private String description;
+
     private MultipartFile image;
     private Category category;
 

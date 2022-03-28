@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="category/layout::head"></head>
+<body>
+<h1>Danh sách danh mục</h1>
+<a th:href="@{/categories/create}">Tạo mới </a>
+<form th:action="@{/category/list}" method="GET">
+    <input type="text" name="q" placeholder="tìm kiếm">
+    <button>Tìm kiếm</button>
+</form>
+<table id="categories">
+    <tr>
+        <th>Mã danh mục</th>
+        <th>Tên danh mục</th>
+        <th colspan="2"></th>
+    </tr>
+    <tr th:each="category : ${categories}">
+        <td th:text="${category.id}"></td>
+        <td >
+            <a th:href="@{/categories/__${category.id}__}" th:text="${category.name}"></a>
+        </td>
+        <td><a th:href="@{/categories/edit/__${category.id}__}">Chỉnh sửa</a></td>
+        <td><a th:href="@{/categories/delete/__${category.id}__}">Xóa</a></td>
+    </tr>
+</table>
+<div th:if="${q==null}">
+    <a th:href="@{'/categories/list'(page=${categories.number - 1})}" th:if="${categories.hasPrevious()}">Previous</a>
+    <span th:text="${categories.number + 1}"></span>/<span th:text="${categories.totalPages}"></span>
+    <a th:href="@{'/categories/list'(page=${categories.number + 1})}" th:if="${categories.hasNext()}">Next</a>
+</div>
+<div th:if="${q!=null}">
+    <a th:href="@{'/categories/list'(page=${categories.number - 1}, q=${q})}" th:if="${categories.hasPrevious()}">Previous</a>
+    <span th:text="${categories.number + 1}"></span>/<span th:text="${categories.totalPages}"></span>
+    <a th:href="@{'/categories/list'(page=${categories.number + 1}, q=${q})}" th:if="${categories.hasNext()}">Next</a>
+</div>
+<a  th:href="@{/products/list}">Danh sách sản phẩm</a>
+<footer th:replace="category/layout::footer"></footer>
+</body>
+</html>

@@ -8,6 +8,13 @@
 <form th:action="@{/products/edit/__${product.id}__}" method="post"
       th:object="${product}" enctype="multipart/form-data">
     <input type="text" placeholder="tên sản phẩm" th:field="*{name}">
+    <select th:field="*{category}">
+        <option value="" disabled selected>Chọn danh mục sản phẩm</option>
+        <!--/*@thymesVar id="categories" type="com.codegym.model.Category"*/-->
+        <th:block th:each="category : ${categories}">
+            <option th:value="${category.id}" th:text="${category.name}"></option>
+        </th:block>
+    </select>
     <input type="text" placeholder="giá sản phẩm" th:field="*{price}">
     <input type="text" placeholder="mô tả sản phẩm" th:field="*{description}">
     <input type="file" placeholder="Ảnh sản phẩm" th:field="*{image}">

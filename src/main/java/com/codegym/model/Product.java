@@ -1,6 +1,9 @@
 package com.codegym.model;
 
+import groovyjarjarantlr4.v4.runtime.misc.NotNull;
+
 import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
 
 @Entity
 @Table(name = "products")
@@ -10,12 +13,15 @@ public class Product {
     private Long id;
 
     @Column(columnDefinition = "Varchar(50)",nullable = false)
+    @NotEmpty
     private String name;
 
     @Column(nullable = false)
+    @NotNull
     private double price;
 
     @Column(columnDefinition = "LONGTEXT",nullable = false)
+    @NotNull
     private String description;
 
     private String image;

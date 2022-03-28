@@ -2,7 +2,9 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head th:replace="product/layout::head"></head>
 <body>
-<h1>Danh sách sản phẩm</h1>
+<h1><a th:href="@{/products/list}">Danh sách sản phẩm</a></h1>
+<a th:href="@{/categories/list}">Danh sách danh mục</a>
+<br>
 <a th:href="@{/products/create}">Tạo mới sản phẩm</a>
 <form th:action="@{/products/list}" method="GET">
     <input type="text" name="q" placeholder="tìm kiếm">
@@ -17,6 +19,7 @@
     <tr>
         <th>Mã sản phẩm</th>
         <th>Tên sản phẩm</th>
+        <th>Tên danh mục</th>
         <th>Giá sản phẩm</th>
         <th>Mô tả sản phẩm</th>
         <th>Ảnh sản phẩm</th>
@@ -27,6 +30,7 @@
         <td >
             <a th:href="@{/products/__${product.id}__}" th:text="${product.name}"></a>
         </td>
+        <td th:text="${product.category.name}"></td>
         <td th:text="${product.price}"></td>
         <td th:text="${product.description}"></td>
         <td><img th:src="@{/image/__${product.image}__}" alt="ảnh sản phẩm" height="100"></td>
@@ -34,6 +38,16 @@
         <td><a th:href="@{/products/delete/__${product.id}__}">Xóa</a></td>
     </tr>
 </table>
+<div th:if="${q==null}">
+    <a th:href="@{'/products/list'(page=${products.number - 1})}" th:if="${products.hasPrevious()}">Previous</a>
+    <span th:text="${products.number + 1}"></span>/<span th:text="${products.totalPages}"></span>
+    <a th:href="@{'/products/list'(page=${products.number + 1})}" th:if="${products.hasNext()}">Next</a>
+</div>
+<div th:if="${q!=null}">
+    <a th:href="@{'/products/list'(page=${products.number - 1}, q=${q})}" th:if="${products.hasPrevious()}">Previous</a>
+    <span th:text="${products.number + 1}"></span>/<span th:text="${products.totalPages}"></span>
+    <a th:href="@{'/products/list'(page=${products.number + 1}, q=${q})}" th:if="${products.hasNext()}">Next</a>
+</div>
 <footer th:replace="product/layout::footer"></footer>
 </body>
 </html>
